@@ -3,6 +3,7 @@ import { Briefcase, Loader2, UserRound } from "lucide-react";
 import { useState, type FormEvent } from "react";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignIn";
 import {
   Field,
   FormError,
@@ -221,6 +222,8 @@ function SignUp() {
           {loading ? "Creating account…" : "Create account"}
         </Button>
       </form>
+
+      <GoogleSignInButton mode="signup" />
     </AuthLayout>
   );
 }

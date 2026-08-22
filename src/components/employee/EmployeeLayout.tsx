@@ -28,7 +28,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DynamicBreadcrumbs } from "@/components/ui/dynamic-breadcrumbs";
-import { employee } from "@/lib/employee-data";
+import { getEmployee } from "@/lib/employee-data";
 import { cn } from "@/lib/utils";
 
 export const nav = [
@@ -171,6 +171,7 @@ export function EmployeeLayout({
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const employee = getEmployee();
 
   useEffect(() => {
     const saved = localStorage.getItem("workora-emp-sidebar-collapsed");
@@ -252,7 +253,7 @@ export function EmployeeLayout({
                   <button className="relative rounded-full outline-none ring-offset-2 ring-offset-background transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring">
                     <Avatar className="h-9 w-9 border border-border">
                       <AvatarFallback className="bg-brand-gradient text-sm font-semibold text-primary-foreground">
-                        AS
+                        {employee.initials}
                       </AvatarFallback>
                     </Avatar>
                     <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success ring-2 ring-surface" />

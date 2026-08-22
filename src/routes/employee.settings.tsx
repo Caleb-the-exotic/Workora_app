@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { employee } from "@/lib/employee-data";
+import { getEmployee } from "@/lib/employee-data";
 
 export const Route = createFileRoute("/employee/settings")({
   head: () => ({
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/employee/settings")({
 });
 
 function SettingsPage() {
+  const employee = getEmployee();
   const [saving, setSaving] = useState(false);
   const [prefs, setPrefs] = useState({ email: true, push: true, weekly: false });
 

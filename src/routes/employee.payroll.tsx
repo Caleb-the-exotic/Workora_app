@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { EmployeeLayout } from "@/components/employee/EmployeeLayout";
 import { Panel, Pill, StatCard } from "@/components/employee/primitives";
 import { Button } from "@/components/ui/button";
-import { money, netPay, payslips, salary } from "@/lib/employee-data";
+import { getNetPay, getPayslips, getSalary, money } from "@/lib/employee-data";
 
 export const Route = createFileRoute("/employee/payroll")({
   head: () => ({
@@ -23,6 +23,9 @@ export const Route = createFileRoute("/employee/payroll")({
 });
 
 function PayrollPage() {
+  const salary = getSalary();
+  const netPay = getNetPay();
+  const payslips = getPayslips();
   const totalDeductions = salary.deductions.reduce((s, d) => s + d.amount, 0);
 
   return (

@@ -27,14 +27,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  activity,
-  attendanceSummary,
-  employee,
-  leaveBalances,
-  leaveRequests,
+  getActivity,
+  getAttendanceSummary,
+  getEmployee,
+  getLeaveBalances,
+  getLeaveRequestsData,
+  getNetPay,
+  getSalary,
   money,
-  netPay,
-  salary,
 } from "@/lib/employee-data";
 
 export const Route = createFileRoute("/employee/")({
@@ -66,6 +66,13 @@ function greeting() {
 }
 
 function EmployeeDashboard() {
+  const employee = getEmployee();
+  const activity = getActivity();
+  const salary = getSalary();
+  const netPay = getNetPay();
+  const attendanceSummary = getAttendanceSummary();
+  const leaveBalances = getLeaveBalances();
+  const leaveRequests = getLeaveRequestsData();
   const [loading, setLoading] = useState(true);
   const [checkedIn, setCheckedIn] = useState(true);
   const [checkedOut, setCheckedOut] = useState(false);
@@ -146,7 +153,7 @@ function EmployeeDashboard() {
                   onClick={() => {
                     setCheckedIn(true);
                     toast.success("Checked in at 09:26 AM", {
-                      description: "Have a productive day, Ananya.",
+                      description: `Have a productive day, ${employee.firstName}.`,
                     });
                   }}
                 >

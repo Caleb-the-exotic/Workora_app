@@ -2,22 +2,17 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { getHolidays } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export type DayKind = "holiday" | "leave" | "pending" | "weekoff" | "workday";
 
-export const holidays2026: Record<string, string> = {
-  "2026-01-01": "New Year's Day",
-  "2026-01-26": "Republic Day",
-  "2026-03-04": "Holi",
-  "2026-04-03": "Good Friday",
-  "2026-05-01": "May Day",
-  "2026-08-15": "Independence Day",
-  "2026-10-02": "Gandhi Jayanti",
-  "2026-10-20": "Dussehra",
-  "2026-11-08": "Diwali",
-  "2026-12-25": "Christmas Day",
-};
+export function getHolidayMap(): Record<string, string> {
+  const holidays = getHolidays();
+  const map: Record<string, string> = {};
+  holidays.forEach((h) => { map[h.date] = h.name; });
+  return map;
+}
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
@@ -56,16 +51,17 @@ export function YearCalendar({
   const [year, setYear] = useState(defaultYear);
   const approvedSet = useMemo(() => new Set(approved), [approved]);
   const pendingSet = useMemo(() => new Set(pending), [pending]);
+  const holidayMap = useMemo(() => getHolidayMap(), []);
 
   const kindOf = (date: string, weekday: number): DayKind => {
-    if (holidays2026[date] && date.startsWith(String(year))) return "holiday";
+    if (holidayMap[date] && date.startsWith(String(year))) return "holiday";
     if (approvedSet.has(date)) return "leave";
     if (pendingSet.has(date)) return "pending";
     if (weekday === 0 || weekday === 6) return "weekoff";
     return "workday";
   };
 
-  const yearHolidays = Object.entries(holidays2026).filter(([d]) => d.startsWith(String(year)));
+  const yearHolidays = Object.entries(holidayMap).filter(([d]) => d.startsWith(String(year)));
 
   return (
     <div className="space-y-5">
@@ -120,7 +116,7 @@ export function YearCalendar({
                   if (d === null) return <span key={i} className="py-1" />;
                   const date = iso(year, m, d);
                   const kind = kindOf(date, new Date(year, m, d).getDay());
-                  const holidayName = holidays2026[date];
+                  const holidayName = holidayMap[date];
                   return (
                     <span
                       key={i}

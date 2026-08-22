@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignIn";
 import { Field, FormError, PasswordField, TextField } from "@/components/auth/fields";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -142,6 +143,8 @@ function SignInPage() {
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
+
+      <GoogleSignInButton mode="login" onError={(msg) => setError(msg)} />
     </AuthLayout>
   );
 }

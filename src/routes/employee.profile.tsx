@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { documents, employee, money, netPay, salary } from "@/lib/employee-data";
+import { getDocumentsData, getEmployee, getNetPay, getSalary, money } from "@/lib/employee-data";
 
 export const Route = createFileRoute("/employee/profile")({
   head: () => ({
@@ -42,6 +42,10 @@ export const Route = createFileRoute("/employee/profile")({
 });
 
 function ProfilePage() {
+  const employee = getEmployee();
+  const salary = getSalary();
+  const netPay = getNetPay();
+  const documents = getDocumentsData();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [phone, setPhone] = useState(employee.phone);

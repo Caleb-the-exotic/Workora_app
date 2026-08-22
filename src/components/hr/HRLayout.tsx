@@ -32,6 +32,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DynamicBreadcrumbs } from "@/components/ui/dynamic-breadcrumbs";
+import { getCurrentUser, getNameFromEmail, getInitials } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const hrNav = [
@@ -196,6 +197,9 @@ export function HRLayout({
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const hrUser = getCurrentUser();
+  const hrName = hrUser ? getNameFromEmail(hrUser.email) : "HR User";
+  const hrInitials = getInitials(hrName);
 
   useEffect(() => {
     const saved = localStorage.getItem("workora-hr-sidebar-collapsed");
@@ -288,7 +292,7 @@ export function HRLayout({
                   <button className="relative rounded-full outline-none ring-offset-2 ring-offset-background transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring">
                     <Avatar className="h-9 w-9 border border-border">
                       <AvatarFallback className="bg-brand-gradient text-sm font-semibold text-primary-foreground">
-                        MJ
+                        {hrInitials}
                       </AvatarFallback>
                     </Avatar>
                     <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success ring-2 ring-surface" />
@@ -296,7 +300,7 @@ export function HRLayout({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-card">
                   <DropdownMenuLabel className="font-normal">
-                    <p className="text-sm font-semibold text-foreground">Meera Joshi</p>
+                    <p className="text-sm font-semibold text-foreground">{hrName}</p>
                     <p className="text-xs text-muted-foreground">HR Officer · Admin access</p>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

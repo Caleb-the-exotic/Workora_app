@@ -18,7 +18,7 @@ import { EmptyState, Panel, Pill, StatCard, type Tone } from "@/components/emplo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { attendanceLog, attendanceSummary } from "@/lib/employee-data";
+import { getAttendanceLog, getAttendanceSummary } from "@/lib/employee-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/employee/attendance")({
@@ -71,6 +71,8 @@ function pad(n: number) {
 }
 
 function AttendancePage() {
+  const attendanceSummary = getAttendanceSummary();
+  const attendanceLog = getAttendanceLog();
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const [dateFrom, setDateFrom] = useState("");

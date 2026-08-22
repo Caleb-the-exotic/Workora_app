@@ -30,7 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { departments, leaveTrend, money } from "@/lib/hr-data";
+import { money } from "@/lib/hr-data";
+import { getDepartments, getLeaveTrend } from "@/lib/data";
 import {
   attendanceDistribution,
   headcountTrend,
@@ -73,6 +74,8 @@ const tooltipStyle = {
 };
 
 function ReportsPage() {
+  const departments = getDepartments();
+  const leaveTrend = getLeaveTrend();
   const [range, setRange] = useState("6m");
   const [dept, setDept] = useState("all");
 

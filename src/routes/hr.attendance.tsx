@@ -24,7 +24,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { attendanceTrend, departments, hrEmployees, type HREmployee } from "@/lib/hr-data";
+import { type HREmployee } from "@/lib/hr-data";
+import { getEmployees, getDepartments, getAttendanceTrend } from "@/lib/data";
 
 export const Route = createFileRoute("/hr/attendance")({
   head: () => ({
@@ -54,6 +55,9 @@ const statusTone = (s: HREmployee["status"]) =>
           : "warning";
 
 function AttendancePage() {
+  const hrEmployees = getEmployees() as unknown as HREmployee[];
+  const departments = getDepartments();
+  const attendanceTrend = getAttendanceTrend();
   const [view, setView] = useState<"daily" | "weekly">("daily");
   const [query, setQuery] = useState("");
   const [dept, setDept] = useState("all");

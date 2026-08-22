@@ -44,8 +44,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { departments, money } from "@/lib/hr-data";
-import { payrollAccuracy, payrollRows, payrollTotals, type PayrollRow } from "@/lib/hr-payroll";
+import { money } from "@/lib/hr-data";
+import { getDepartments, getPayrollRows } from "@/lib/data";
+import { payrollAccuracy, payrollTotals, type PayrollRow } from "@/lib/hr-payroll";
 
 export const Route = createFileRoute("/hr/payroll")({
   head: () => ({
@@ -67,6 +68,8 @@ const tone = (s: PayrollRow["status"]) =>
   s === "Processed" ? "success" : s === "Pending" ? "pending" : "warning";
 
 function HRPayrollPage() {
+  const departments = getDepartments();
+  const payrollRows = getPayrollRows();
   const [rows, setRows] = useState<PayrollRow[]>(payrollRows);
   const [query, setQuery] = useState("");
   const [dept, setDept] = useState("all");

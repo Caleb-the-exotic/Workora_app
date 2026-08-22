@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { employee, leaveRequests as seedRequests, type LeaveStatus } from "@/lib/employee-data";
+import { getEmployee, getLeaveRequestsData, type LeaveStatus } from "@/lib/employee-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/employee/leave")({
@@ -112,6 +112,8 @@ function daysBetween(from: string, to: string) {
 }
 
 function LeavePage() {
+  const employee = getEmployee();
+  const seedRequests = getLeaveRequestsData();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<Request[]>(seedRequests as Request[]);
   const [open, setOpen] = useState(false);

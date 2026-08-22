@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { EmployeeLayout } from "@/components/employee/EmployeeLayout";
 import { EmptyState, Panel, StatusDot } from "@/components/employee/primitives";
 import { Button } from "@/components/ui/button";
-import { notifications as seed } from "@/lib/employee-data";
+import { getNotifications } from "@/lib/employee-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/employee/notifications")({
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/employee/notifications")({
 });
 
 function NotificationsPage() {
-  const [items, setItems] = useState(seed.map((n) => ({ ...n })));
+  const [items, setItems] = useState(() => getNotifications().map((n) => ({ ...n })));
   const unread = items.filter((i) => i.unread).length;
 
   return (

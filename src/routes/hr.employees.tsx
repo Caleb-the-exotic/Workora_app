@@ -63,7 +63,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { departments, hrEmployees, jobTypes, money, type HREmployee } from "@/lib/hr-data";
+import { jobTypes, money, type HREmployee } from "@/lib/hr-data";
+import { getDepartments, getEmployees } from "@/lib/data";
 
 export const Route = createFileRoute("/hr/employees")({
   head: () => ({
@@ -100,6 +101,8 @@ const statusTone = (s: HREmployee["status"]) =>
 const PAGE_SIZE = 8;
 
 function EmployeesPage() {
+  const departments = getDepartments();
+  const hrEmployees = getEmployees() as unknown as HREmployee[];
   const [employeesList, setEmployeesList] = useState<HREmployee[]>(hrEmployees);
   const [query, setQuery] = useState("");
   const [dept, setDept] = useState("all");
