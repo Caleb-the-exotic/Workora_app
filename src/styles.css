@@ -236,6 +236,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
+  transform: translate(-50%, -50%);
   width: min(92vw, 46rem);
   text-align: center;
   will-change: opacity, transform;
@@ -265,10 +266,11 @@
 }
 
 .film-wordmark {
+  font-family: var(--font-montserrat);
   font-size: clamp(2.6rem, 11vw, 7rem);
-  font-weight: 200;
+  font-weight: 700;
   letter-spacing: 0.34em;
-  text-indent: 0.34em;
+  text-indent: -0.3em;
   line-height: 1;
   color: var(--film-ink);
   text-shadow: 0 0 60px oklch(0.58 0.221 27 / 35%);
@@ -349,7 +351,9 @@
 
 .film-brand {
   pointer-events: auto;
+  font-family: var(--font-montserrat);
   font-size: 0.72rem;
+  font-weight: 700;
   letter-spacing: 0.4em;
   color: var(--film-muted);
 }

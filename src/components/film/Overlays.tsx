@@ -66,7 +66,7 @@ function PanelCard({
 }
 
 export default function Overlays({ p }: { p: number }) {
-  const introWord = bell(p, -0.04, 0.15, 0.4);
+  const introWord = 1 - range(p, 0.06, 0.16);
   const introTag = bell(p, 0.04, 0.18, 0.35);
   const finalIn = range(p, 0.9, 0.985);
   const leaveState = p > 0.645 ? "Approved" : p > 0.585 ? "In Review" : "Pending";
