@@ -28,7 +28,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { leaveApprovals, type ApprovalStatus, type LeaveApproval } from "@/lib/hr-data";
+import { getLeaveApprovals, type ApprovalStatus, type LeaveApproval } from "@/lib/hr-data";
+import { updateLeaveRequest, addNotification, getEmployeeById } from "@/lib/data";
 
 export const Route = createFileRoute("/hr/approvals")({
   head: () => ({
@@ -50,7 +51,7 @@ const tone = (s: ApprovalStatus) =>
   s === "approved" ? "success" : s === "rejected" ? "warning" : "pending";
 
 function ApprovalsPage() {
-  const [items, setItems] = useState<LeaveApproval[]>(leaveApprovals);
+  const [items, setItems] = useState<LeaveApproval[]>(getLeaveApprovals());
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | ApprovalStatus>("pending");
   const [active, setActive] = useState<LeaveApproval | null>(null);
@@ -68,10 +69,24 @@ function ApprovalsPage() {
 
   function decide(row: LeaveApproval, status: ApprovalStatus) {
     setItems((prev) => prev.map((r) => (r.id === row.id ? { ...r, status } : r)));
+    updateLeaveRequest(row.id, { status });
+    const emp = getEmployeeById(row.employeeId);
+    const empName = emp?.name ?? row.employee;
+    addNotification({
+      id: `NTF-${Date.now()}`,
+      userId: row.employeeId,
+      category: "leave",
+      title: `Leave request ${row.id} ${status}`,
+      body: status === "approved"
+        ? `Your ${row.type.toLowerCase()} from ${row.from} to ${row.to} has been approved by HR.`
+        : `Your ${row.type.toLowerCase()} from ${row.from} to ${row.to} has been rejected by HR.${comment ? ` Reason: ${comment}` : ""}`,
+      time: new Date().toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }),
+      unread: true,
+    });
     if (active?.id === row.id) setActive(null);
     setComment("");
-    if (status === "approved") toast.success(`${row.id} approved · ${row.employee} notified`);
-    else toast.error(`${row.id} rejected · ${row.employee} notified`);
+    if (status === "approved") toast.success(`${row.id} approved · ${empName} notified`);
+    else toast.error(`${row.id} rejected · ${empName} notified`);
   }
 
   const pending = items.filter((r) => r.status === "pending").length;

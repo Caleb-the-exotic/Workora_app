@@ -45,6 +45,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { getEmployee, getLeaveRequestsData, type LeaveStatus } from "@/lib/employee-data";
+import { addLeaveRequest, getLeaveBalance } from "@/lib/data";
+import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/employee/leave")({
@@ -86,20 +88,25 @@ const statusLabel: Record<LeaveStatus, string> = {
   rejected: "Rejected",
 };
 
-const balances = [
-  {
-    type: "Paid time off",
-    available: 24,
-    used: 6,
-    total: 30,
-    tone: "success" as Tone,
-    icon: CalendarCheck2,
-  },
-  { type: "Sick leave", available: 7, used: 3, total: 10, tone: "info" as Tone, icon: Stethoscope },
-  { type: "Unpaid leave", available: 5, used: 0, total: 5, tone: "muted" as Tone, icon: Wallet2 },
-];
-
 const leaveTypes = ["Paid time off", "Sick leave", "Unpaid leave"] as const;
+
+function getBalances() {
+  const user = getCurrentUser();
+  if (!user) return [];
+  const bal = getLeaveBalance(user.employeeId);
+  if (!bal) {
+    return [
+      { type: "Paid time off", available: 24, used: 6, total: 30, tone: "success" as Tone, icon: CalendarCheck2 },
+      { type: "Sick leave", available: 7, used: 3, total: 10, tone: "info" as Tone, icon: Stethoscope },
+      { type: "Unpaid leave", available: 5, used: 0, total: 5, tone: "muted" as Tone, icon: Wallet2 },
+    ];
+  }
+  return [
+    { type: "Paid time off", available: bal.paid.total - bal.paid.used, used: bal.paid.used, total: bal.paid.total, tone: "success" as Tone, icon: CalendarCheck2 },
+    { type: "Sick leave", available: bal.sick.total - bal.sick.used, used: bal.sick.used, total: bal.sick.total, tone: "info" as Tone, icon: Stethoscope },
+    { type: "Unpaid leave", available: bal.unpaid.total - bal.unpaid.used, used: bal.unpaid.used, total: bal.unpaid.total, tone: "muted" as Tone, icon: Wallet2 },
+  ];
+}
 
 const fmt = (iso: string) =>
   new Date(iso).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
@@ -114,6 +121,7 @@ function daysBetween(from: string, to: string) {
 function LeavePage() {
   const employee = getEmployee();
   const seedRequests = getLeaveRequestsData();
+  const balances = useMemo(() => getBalances(), []);
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<Request[]>(seedRequests as Request[]);
   const [open, setOpen] = useState(false);
@@ -174,6 +182,17 @@ function LeavePage() {
       appliedOn: fmt(new Date().toISOString().slice(0, 10)),
       ...(file ? { attachment: file.name } : {}),
     };
+    addLeaveRequest({
+      id: next.id,
+      employeeId: employee.id,
+      type: next.type,
+      from: next.from,
+      to: next.to,
+      days: next.days,
+      reason: next.reason,
+      status: "pending",
+      appliedOn: next.appliedOn,
+    });
     setRequests((r) => [next, ...r]);
     setSubmitting(false);
     setConfirm(false);
@@ -323,8 +342,24 @@ function LeavePage() {
         className="mt-5"
       >
         <YearCalendar
-          approved={["2026-08-18", "2026-07-29", "2026-07-30"]}
-          pending={["2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05"]}
+          approved={requests.filter((r) => r.status === "approved").flatMap((r) => {
+            const dates: string[] = [];
+            const start = new Date(r.from);
+            const end = new Date(r.to);
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+              dates.push(d.toISOString().slice(0, 10));
+            }
+            return dates;
+          })}
+          pending={requests.filter((r) => r.status === "pending").flatMap((r) => {
+            const dates: string[] = [];
+            const start = new Date(r.from);
+            const end = new Date(r.to);
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+              dates.push(d.toISOString().slice(0, 10));
+            }
+            return dates;
+          })}
         />
       </Panel>
 

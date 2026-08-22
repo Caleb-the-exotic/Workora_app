@@ -60,6 +60,7 @@
     "input-otp": "^1.4.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.575.0",
+    "mongodb": "^7.5.0",
     "ogl": "^1.0.11",
     "postprocessing": "^6.39.4",
     "react": "^19.2.0",

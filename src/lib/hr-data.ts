@@ -79,7 +79,7 @@ function mapLeaveType(type: string): "Paid time off" | "Sick leave" | "Unpaid le
   return "Paid time off";
 }
 
-export const leaveApprovals: LeaveApproval[] = (() => {
+export function getLeaveApprovals(): LeaveApproval[] {
   const employees = getEmployees();
   const requests = getLeaveRequests();
   return requests.map((r) => {
@@ -107,7 +107,7 @@ export const leaveApprovals: LeaveApproval[] = (() => {
       balanceAfter: `${remaining} of 30 days`,
     };
   });
-})();
+}
 
 export const attendanceTrend = getAttendanceTrend();
 

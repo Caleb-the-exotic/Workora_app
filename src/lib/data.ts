@@ -340,6 +340,21 @@ export function getLeaveBalance(employeeId: string): LeaveBalanceRecord | undefi
   return load<LeaveBalanceRecord>(KEYS.leaveBalances).find((b) => b.employeeId === employeeId);
 }
 
+export function updateLeaveBalance(employeeId: string, updates: Partial<LeaveBalanceRecord>) {
+  const all = load<LeaveBalanceRecord>(KEYS.leaveBalances);
+  const idx = all.findIndex((b) => b.employeeId === employeeId);
+  if (idx !== -1) {
+    all[idx] = { ...all[idx], ...updates };
+    save(KEYS.leaveBalances, all);
+  }
+}
+
+export function addNotification(rec: NotificationRecord) {
+  const all = load<NotificationRecord>(KEYS.notifications);
+  all.push(rec);
+  save(KEYS.notifications, all);
+}
+
 // ─── Payroll API ─────────────────────────────────────────────────────────────
 
 export function getPayroll(employeeId: string): PayrollRecord[] {

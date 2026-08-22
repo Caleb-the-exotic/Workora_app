@@ -74,8 +74,23 @@ function EmployeeDashboard() {
   const leaveBalances = getLeaveBalances();
   const leaveRequests = getLeaveRequestsData();
   const [loading, setLoading] = useState(true);
-  const [checkedIn, setCheckedIn] = useState(true);
-  const [checkedOut, setCheckedOut] = useState(false);
+  const [checkedIn, setCheckedIn] = useState(() => {
+    const stored = localStorage.getItem("workora-checkin");
+    if (stored) {
+      const d = new Date(stored);
+      return d.toDateString() === new Date().toDateString();
+    }
+    return false;
+  });
+  const [checkedOut, setCheckedOut] = useState(() => localStorage.getItem("workora-checkout") === "true");
+  const [checkInTime, setCheckInTime] = useState<Date | null>(() => {
+    const stored = localStorage.getItem("workora-checkin");
+    if (stored) {
+      const d = new Date(stored);
+      if (d.toDateString() === new Date().toDateString()) return d;
+    }
+    return null;
+  });
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -132,15 +147,24 @@ function EmployeeDashboard() {
                 <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
                   <span>
                     <span className="text-primary-foreground/70">Check-in </span>
-                    {checkedIn ? "09:26 AM" : "—"}
+                    {checkedIn && checkInTime
+                      ? checkInTime.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+                      : "—"}
                   </span>
                   <span>
                     <span className="text-primary-foreground/70">Check-out </span>
-                    {checkedOut ? "06:34 PM" : "—"}
+                    {checkedOut ? new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—"}
                   </span>
                   <span>
                     <span className="text-primary-foreground/70">Worked </span>
-                    {checkedIn ? "07h 12m" : "00h 00m"}
+                    {checkedIn && checkInTime
+                      ? (() => {
+                          const ms = Date.now() - checkInTime.getTime();
+                          const h = Math.floor(ms / 3600000);
+                          const m = Math.floor((ms % 3600000) / 60000);
+                          return `${String(h).padStart(2, "0")}h ${String(m).padStart(2, "0")}m`;
+                        })()
+                      : "00h 00m"}
                   </span>
                 </div>
               </div>
@@ -151,8 +175,11 @@ function EmployeeDashboard() {
                   className="flex-1 rounded-xl"
                   disabled={checkedIn}
                   onClick={() => {
+                    const now = new Date();
                     setCheckedIn(true);
-                    toast.success("Checked in at 09:26 AM", {
+                    setCheckInTime(now);
+                    localStorage.setItem("workora-checkin", now.toISOString());
+                    toast.success(`Checked in at ${now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`, {
                       description: `Have a productive day, ${employee.firstName}.`,
                     });
                   }}
@@ -165,8 +192,9 @@ function EmployeeDashboard() {
                   disabled={!checkedIn || checkedOut}
                   onClick={() => {
                     setCheckedOut(true);
-                    toast.success("Checked out at 06:34 PM", {
-                      description: "Total hours logged today: 09h 08m.",
+                    localStorage.setItem("workora-checkout", "true");
+                    toast.success(`Checked out at ${new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`, {
+                      description: "Total hours logged today.",
                     });
                   }}
                 >

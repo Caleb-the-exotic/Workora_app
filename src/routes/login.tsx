@@ -46,6 +46,17 @@ function SignInPage() {
       });
       localStorage.setItem("workora-accounts", JSON.stringify(accounts));
     }
+    const hrExists = accounts.some((a: { email: string }) => a.email === "hr@workora.com");
+    if (!hrExists) {
+      accounts.push({
+        employeeId: "EMP1000",
+        email: "hr@workora.com",
+        password: "admin12345",
+        role: "hr",
+        verified: true,
+      });
+      localStorage.setItem("workora-accounts", JSON.stringify(accounts));
+    }
   }, []);
 
   function onSubmit(e: FormEvent) {

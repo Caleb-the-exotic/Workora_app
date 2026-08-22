@@ -77,8 +77,16 @@ function AttendancePage() {
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [checkedInAt, setCheckedInAt] = useState<Date | null>(null);
-  const [checkedOut, setCheckedOut] = useState(false);
+  const [checkedInAt, setCheckedInAt] = useState<Date | null>(() => {
+    const stored = localStorage.getItem("workora-checkin");
+    if (stored) {
+      const d = new Date(stored);
+      const today = new Date();
+      if (d.toDateString() === today.toDateString()) return d;
+    }
+    return null;
+  });
+  const [checkedOut, setCheckedOut] = useState(() => localStorage.getItem("workora-checkout") === "true");
   const [now, setNow] = useState(() => new Date());
   const [busy, setBusy] = useState(false);
 
@@ -109,15 +117,18 @@ function AttendancePage() {
   const handleCheckIn = async () => {
     setBusy(true);
     await new Promise((r) => setTimeout(r, 700));
-    setCheckedInAt(new Date());
+    const now = new Date();
+    setCheckedInAt(now);
+    localStorage.setItem("workora-checkin", now.toISOString());
     setBusy(false);
-    toast.success("Checked in", { description: `Your day started at ${new Date().toLocaleTimeString()}` });
+    toast.success("Checked in", { description: `Your day started at ${now.toLocaleTimeString()}` });
   };
 
   const handleCheckOut = async () => {
     setBusy(true);
     await new Promise((r) => setTimeout(r, 700));
     setCheckedOut(true);
+    localStorage.setItem("workora-checkout", "true");
     setBusy(false);
     toast.success("Checked out", { description: `Total working duration ${duration}` });
   };

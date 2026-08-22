@@ -26,7 +26,7 @@ import { Panel, Pill, StatCard } from "@/components/employee/primitives";
 import { HRLayout } from "@/components/hr/HRLayout";
 import { Button } from "@/components/ui/button";
 import {
-  leaveApprovals,
+  getLeaveApprovals,
   recentActivity,
 } from "@/lib/hr-data";
 import { getOrgStats, getDepartmentHeadcount, getAttendanceTrend, getLeaveTrend } from "@/lib/data";
@@ -59,7 +59,7 @@ function HRDashboard() {
   const departmentHeadcount = getDepartmentHeadcount();
   const attendanceTrend = getAttendanceTrend();
   const leaveTrend = getLeaveTrend();
-  const pending = leaveApprovals.filter((r) => r.status === "pending");
+  const pending = getLeaveApprovals().filter((r) => r.status === "pending");
 
   return (
     <HRLayout
